@@ -15,6 +15,7 @@ class SpeechText extends StatefulWidget {
 class _SpeechTextState extends State<SpeechText> {
   String recognizedText = "Recognize text is";
   bool isEnabled = false;
+  bool isListening = false;
 
   @override
   void initState() {
@@ -28,13 +29,18 @@ class _SpeechTextState extends State<SpeechText> {
   }
 
   _recognizedText() async {
-    await SpeechTextRecognizer.startListning(speechRecogListner);
+    if (isListening) {
+      await SpeechTextRecognizer.startListening(speechRecogListener);
+    }
   }
 
-  void speechRecogListner(SpeechRecognitionResult result) {
-    print(result.recognizedWords);
-    recognizedText = result.recognizedWords;
+  void speechRecogListener(SpeechRecognitionResult result) {
+    //print(result.recognizedWords);
     setState(() {});
+    if (isListening && !SpeechTextRecognizer.isListening()) {
+      recognizedText += ' ${result.recognizedWords}';
+      _recognizedText();
+    }
   }
 
   @override
@@ -48,13 +54,17 @@ class _SpeechTextState extends State<SpeechText> {
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 10),
         child: FloatingActionButton(
-            child: !SpeechTextRecognizer.isListning()
-                ? const Icon(Icons.mic)
-                : const Icon(Icons.stop),
+            child:
+                !isListening ? const Icon(Icons.mic) : const Icon(Icons.stop),
             onPressed: () {
-              SpeechTextRecognizer.isListning()
-                  ? SpeechTextRecognizer.stopListning
-                  : _recognizedText();
+              if (isListening) {
+                isListening = false;
+                SpeechTextRecognizer.stopListening;
+              } else {
+                isListening = true;
+                _recognizedText();
+              }
+              setState(() {});
             }),
       ),
       body: Container(

@@ -6,11 +6,10 @@ class SpeechTextRecognizer {
 
   static initialize() async {
     bool status = await speechToText.initialize();
-    print(status);
     return status;
   }
 
-  static startListning(Function(SpeechRecognitionResult) recogFn) async {
+  static startListening(Function(SpeechRecognitionResult) recogFn) async {
     try {
       await speechToText.listen(
           listenMode: ListenMode.dictation,
@@ -21,11 +20,11 @@ class SpeechTextRecognizer {
     }
   }
 
-  static void stopListning() async {
+  static void stopListening() async {
     await speechToText.stop();
   }
 
-  static bool isListning() {
+  static bool isListening() {
     return speechToText.isListening;
   }
 }
