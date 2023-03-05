@@ -16,7 +16,7 @@ class _SpeechTextState extends State<SpeechText> {
   String recognizedText = "Recognize text is";
   bool isEnabled = false;
   bool isListening = false;
-
+  String _prevText = "";
   @override
   void initState() {
     super.initState();
@@ -36,9 +36,12 @@ class _SpeechTextState extends State<SpeechText> {
 
   void speechRecogListener(SpeechRecognitionResult result) {
     //print(result.recognizedWords);
+    recognizedText = '$_prevText${result.recognizedWords}';
+    //recognizedText = result.recognizedWords;
+
     setState(() {});
     if (isListening && !SpeechTextRecognizer.isListening()) {
-      recognizedText += ' ${result.recognizedWords}';
+      _prevText += '${result.recognizedWords} ';
       _recognizedText();
     }
   }
